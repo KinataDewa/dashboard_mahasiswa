@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('nim')->nullable();
-            $table->string('kelas')->nullable();
+        Schema::table('nilais', function (Blueprint $table) {
+            $table->integer('semester')->default(1);
         });
     }
 
@@ -22,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('nilais', function (Blueprint $table) {
             //
         });
     }

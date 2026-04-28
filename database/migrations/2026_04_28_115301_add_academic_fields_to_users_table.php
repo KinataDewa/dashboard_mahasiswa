@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('nim')->nullable();
-            $table->string('kelas')->nullable();
+            $table->integer('semester')->default(1);
+            $table->float('ip')->nullable();
+            $table->float('ipk')->nullable();
         });
     }
 

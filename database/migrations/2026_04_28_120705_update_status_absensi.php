@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('nim')->nullable();
-            $table->string('kelas')->nullable();
+        Schema::table('absensis', function (Blueprint $table) {
+            $table->enum('status', ['hadir', 'izin', 'sakit', 'alpha'])->change();
         });
     }
 
@@ -22,8 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        //
     }
 };

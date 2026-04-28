@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('nim')->nullable();
-            $table->string('kelas')->nullable();
+        Schema::create('mata_kuliahs', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama'); // contoh: Pemrograman Web
+            $table->string('kode'); // contoh: PW001
+            $table->timestamps();
         });
     }
 
@@ -22,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('mata_kuliahs');
     }
 };

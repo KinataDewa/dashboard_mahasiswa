@@ -11,76 +11,116 @@
     {{-- FONT --}}
     <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
+    {{-- CHART --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background: #f5f7fb;
-        }
+    font-family: 'Inter', sans-serif;
+    background: #f1f5f9;
+}
 
-        .sidebar {
-            width: 240px;
-            height: 100vh;
-            background: white;
-            position: fixed;
-            padding: 20px;
-            border-right: 1px solid #eee;
-        }
+/* SIDEBAR */
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    background: #ffffff;
+    position: fixed;
+    padding: 20px;
+    border-right: 1px solid #e5e7eb;
+}
 
-        .logo {
-            font-family: 'Poetsen One', sans-serif;
-            font-size: 22px;
-            color: #1E40AF;
-        }
+.logo {
+    font-family: 'Poetsen One', sans-serif;
+    font-size: 22px;
+    color: #2563eb;
+}
 
-        .menu-item {
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
+.menu-item {
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
 
-        .menu-item.active {
-            background: #eef2ff;
-            color: #1E40AF;
-            font-weight: 600;
-        }
+.menu-item:hover {
+    background: #f1f5f9;
+}
 
-        .main {
-            margin-left: 240px;
-            padding: 20px;
-        }
+.menu-item.active {
+    background: #e0e7ff;
+    color: #2563eb;
+    font-weight: 600;
+}
 
-        .topbar {
-            background: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
+/* MAIN */
+.main {
+    margin-left: 240px;
+    padding: 25px;
+}
 
-        .card-custom {
-            border-radius: 16px;
-            border: none;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.05);
-        }
+/* TOPBAR */
+.topbar {
+    background: white;
+    padding: 18px 22px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
 
-        .stat-number {
-            font-size: 28px;
-            font-weight: 700;
-        }
+/* CARD */
+.card-custom {
+    border-radius: 18px;
+    border: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
 
-        .badge-status {
-            padding: 6px 10px;
-            border-radius: 10px;
-            font-size: 12px;
-        }
+.card-custom:hover {
+    transform: translateY(-2px);
+}
 
-        .bg-soft-success { background: #dcfce7; color: #166534; }
-        .bg-soft-warning { background: #fef9c3; color: #854d0e; }
-        .bg-soft-danger { background: #fee2e2; color: #991b1b; }
-        .bg-soft-orange { background: #ffedd5; color: #9a3412; }
-        .table td {
-            vertical-align: middle;
-        }
+/* STAT */
+.stat-number {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+/* BADGE */
+.badge-status {
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+/* TABLE */
+.table {
+    font-size: 14px;
+}
+
+.table th {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* CHART FIX */
+.chart-container {
+    width: 100%;
+    height: 220px; /* 🔥 ini kunci: lebih pendek */
+}
+
+/* RESPONSIVE */
+@media(max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 15px;
+    }
+}
     </style>
 </head>
 <body>
@@ -175,6 +215,52 @@
 
     </div>
 
+    {{-- chart --}}
+    @php
+        $alpha = $user->absensis->where('status','alpha')->count();
+        $izin = $user->absensis->where('status','izin')->count();
+        $sakit = $user->absensis->where('status','sakit')->count();
+
+        // hadir = total - lainnya (kalau kamu simpan hadir)
+        $hadir = $user->absensis->where('status','hadir')->count();
+    @endphp
+
+    @php
+        $labels = [];
+        $dataNilai = [];
+
+        foreach($user->nilais as $n){
+            $labels[] = $n->mataKuliah->nama;
+
+            $na = ($n->tugas*0.3)+($n->uts*0.3)+($n->uas*0.4);
+            $dataNilai[] = round($na,1);
+        }
+    @endphp
+
+    <div class="row mb-4">
+
+    {{-- CHART ABSENSI --}}
+    <div class="col-md-6 mb-3">
+        <div class="card card-custom p-4 h-100">
+            <h6 class="mb-3">Statistik Absensi</h6>
+            <div class="chart-container">
+                <canvas id="absensiChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    {{-- CHART NILAI --}}
+    <div class="col-md-6 mb-3">
+        <div class="card card-custom p-4 h-100">
+            <h6 class="mb-3">Grafik Nilai Mata Kuliah</h6>
+            <div class="chart-container">
+                <canvas id="nilaiChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
     {{-- CONTENT --}}
     <div class="row g-3">
 
@@ -206,66 +292,131 @@
         </div>
 
         {{-- ABSENSI --}}
-<div class="col-md-6">
-    <div class="card card-custom p-3">
-        <h6 class="mb-3">Riwayat Absensi</h6>
+        <div class="col-md-6">
+            <div class="card card-custom p-3">
+                <h6 class="mb-3">Riwayat Absensi</h6>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Mata Kuliah</th>
-                    <th>Tanggal</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Mata Kuliah</th>
+                            <th>Tanggal</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                @forelse(
-                    $user->absensis
-                        ->whereIn('status', ['alpha','izin','sakit'])
-                        ->sortByDesc(function($item){
-                            return $item->tanggal . '-' . $item->jam_ke;
-                        })
-                        ->take(5)
-                    as $a
-                )
+                        @forelse(
+                            $user->absensis
+                                ->whereIn('status', ['alpha','izin','sakit'])
+                                ->sortByDesc(function($item){
+                                    return $item->tanggal . '-' . $item->jam_ke;
+                                })
+                                ->take(5)
+                            as $a
+                        )
 
-                <tr>
-                    <td>{{ $a->mataKuliah->nama }}</td>
+                        <tr>
+                            <td>{{ $a->mataKuliah->nama }}</td>
 
-                    <td>
-                        {{ \Carbon\Carbon::parse($a->tanggal)->format('d M Y') }}
-                    </td>
+                            <td>
+                                {{ \Carbon\Carbon::parse($a->tanggal)->format('d M Y') }}
+                            </td>
 
-                    <td>
-                        <span class="badge-status
-                            @if($a->status=='alpha') bg-soft-danger
-                            @elseif($a->status=='izin') bg-soft-warning
-                            @elseif($a->status=='sakit') bg-soft-orange
-                            @endif
-                        ">
-                            {{ ucfirst($a->status) }}
-                        </span>
-                    </td>
-                </tr>
+                            <td>
+                                <span class="badge-status
+                                    @if($a->status=='alpha') bg-soft-danger
+                                    @elseif($a->status=='izin') bg-soft-warning
+                                    @elseif($a->status=='sakit') bg-soft-orange
+                                    @endif
+                                ">
+                                    {{ ucfirst($a->status) }}
+                                </span>
+                            </td>
+                        </tr>
 
-                @empty
-                <tr>
-                    <td colspan="3" class="text-center text-muted">
-                        Tidak ada data absensi
-                    </td>
-                </tr>
-                @endforelse
+                        @empty
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">
+                                Tidak ada data absensi
+                            </td>
+                        </tr>
+                        @endforelse
 
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
 
+            </div>
+        </div>
     </div>
-</div>
-
-    </div>
 
 </div>
+<script>
+const ctx = document.getElementById('absensiChart');
 
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Hadir', 'Izin', 'Sakit', 'Alpha'],
+        datasets: [{
+            data: [
+                {{ $hadir }},
+                {{ $izin }},
+                {{ $sakit }},
+                {{ $alpha }}
+            ],
+            backgroundColor: [
+                '#22c55e', // hijau (hadir)
+                '#facc15', // kuning (izin)
+                '#fb923c', // orange (sakit)
+                '#ef4444'  // merah (alpha)
+            ],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false, // 🔥 TARUH DI SINI
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+</script>
+
+<script>
+const ctxNilai = document.getElementById('nilaiChart');
+
+new Chart(ctxNilai, {
+    type: 'bar',
+    data: {
+        labels: {!! json_encode($labels) !!},
+        datasets: [{
+            label: 'Nilai Akhir',
+            data: {!! json_encode($dataNilai) !!},
+            borderRadius: 8,
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false, // 🔥 TARUH DI SINI
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+</script>
 </body>
 </html>

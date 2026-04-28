@@ -28,4 +28,21 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/dashboard/mahasiswa', function () {
+        return view('dashboard.mahasiswa');
+    })->middleware('role:mahasiswa');
+
+    Route::get('/dashboard/dpa', function () {
+        return view('dashboard.dpa');
+    })->middleware('role:dpa');
+
+    Route::get('/dashboard/civitas', function () {
+        return view('dashboard.civitas');
+    })->middleware('role:civitas');
+
+});
+
 require __DIR__.'/auth.php';
